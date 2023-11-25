@@ -27,7 +27,7 @@ def exibir_dados(lista_empregados):
         print(f"Nome: {empregado['nome']} {empregado['sobrenome']}, Ano de Nascimento: {empregado['ano_nascimento']}, RG: {empregado['RG']}, Ano de Admissão: {empregado['ano_admissao']}, Salário: {empregado['salario']}")
 
 # Arquivo de exemplo com dados dos empregados
-nome_arquivo = 'dados_empregados.txt'
+nome_arquivo ='dados_empregados.txt'
 
 # Criar a lista de empregados lendo os dados do arquivo
 lista_empregados = ler_dados_do_arquivo(nome_arquivo)
@@ -40,7 +40,7 @@ exibir_dados(lista_empregados)
 reajusta_dez_porcento(lista_empregados)
 
 # Exibir os dados após o reajuste
-print("\n Dados dos empregados apos o reajuste:")
+print("\nDados dos empregados apos o reajuste:")
 exibir_dados(lista_empregados)
 
 
