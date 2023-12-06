@@ -1,14 +1,13 @@
 from abc import ABC, abstractmethod
 
-# Classe para representar dados de data
 class Data:
-    def __init__(self, dia=1, mes=1, ano=2000):
+    def __init__(self, dia=1, mes=1, ano=1940):
         if dia < 1 or dia > 31:
-            raise ValueError("Dia invalido")
+            raise ValueError("Dia inválido")
         if mes < 1 or mes > 12:
-            raise ValueError("Mês invalido")
-        if ano < 2000 or ano > 2100:
-            raise ValueError("Ano invalido")
+            raise ValueError("Mês inválido")
+        if ano < 1940 or ano > 2100:
+            raise ValueError("Ano inválido")
         self.__dia = dia
         self.__mes = mes
         self.__ano = ano
@@ -20,7 +19,7 @@ class Data:
     @dia.setter
     def dia(self, dia):
         if dia < 1 or dia > 31:
-            raise ValueError("Dia invalido")
+            raise ValueError("Dia inválido")
         self.__dia = dia
 
     @property
@@ -30,7 +29,7 @@ class Data:
     @mes.setter
     def mes(self, mes):
         if mes < 1 or mes > 12:
-            raise ValueError("Mês invalido")
+            raise ValueError("Mês inválido")
         self.__mes = mes
 
     @property
@@ -39,7 +38,7 @@ class Data:
     
     @ano.setter
     def ano(self, ano):
-        if ano < 2000 or ano > 2100:
+        if ano < 1940 or ano > 2100:
             raise ValueError("Ano inválido")
         self.__ano = ano
     
@@ -47,212 +46,246 @@ class Data:
         return "{}/{}/{}".format(self.__dia, self.__mes, self.__ano)
 
     def __eq__(self, outraData):
-        return  self.__dia == outraData.__dia and \
-                self.__mes == outraData.__mes and \
-                self.__ano == outraData.__ano
+        return (self.__dia, self.__mes, self.__ano) == (outraData.__dia, outraData.__mes, outraData.__ano)
     
     def __lt__(self, outraData):
-        if self.__ano < outraData.__ano:
-            return True
-        elif self.__ano == outraData.__ano:
-            if self.__mes < outraData.__mes:
-                return True
-            elif self.__mes == outraData.__mes:
-                if self.__dia < outraData.__dia:
-                    return True
-        return False
+        return (self.__ano, self.__mes, self.__dia) < (outraData.__ano, outraData.__mes, outraData.__dia)
     
     def __gt__(self, outraData):
-        if self.__ano > outraData.__ano:
-            return True
-        elif self.__ano == outraData.__ano:
-            if self.__mes > outraData.__mes:
-                return True
-            elif self.__mes == outraData.__mes:
-                if self.__dia > outraData.__dia:
-                    return True
-        return False
+        return (self.__ano, self.__mes, self.__dia) > (outraData.__ano, outraData.__mes, outraData.__dia)
+
+
+class AnaliseDados(ABC): 
+    @abstractmethod
+    def entrada_de_dados(self):
+        pass
+
+    @abstractmethod
+    def mostra_mediana(self):
+        pass
     
-# Classe abstrata base para análise de dados
-class AnaliseDados(ABC):
-   # (Métodos abstratos para serem implementados pelas subclasses)
     @abstractmethod
-    def __init__(self, tipoDeDados):
-        self.__tipoDeDados = tipoDeDados
-        self.__lista = []
-
-    @abstractmethod
-    def entradaDeDados(self):
+    def mostra_menor(self):
         pass
 
     @abstractmethod
-    def mostraMediana(self):
+    def mostra_maior(self):
+        pass
+    
+    @abstractmethod
+    def listar_em_ordem(self):
         pass
 
     @abstractmethod
-    def mostraMenor(self):
+    def __iter__(self):
         pass
 
-    @abstractmethod
-    def mostraMaior(self):
-        pass
-
-    @abstractmethod
-    def listarEmOrdem(self):
-        pass
-
-    def calcularMediana(self):
-        lista_ordenada = sorted(self.__lista)
-        tamanho = len(lista_ordenada)
-
-        if tamanho % 2 == 0:
-            meio1 = lista_ordenada[tamanho // 2 - 1]
-            meio2 = lista_ordenada[tamanho // 2]
-            return meio1, meio2
-        else:
-            meio = lista_ordenada[tamanho // 2]
-            return meio,
-
-    def calcularMedia(self):
-        return sum(self.__lista) / len(self.__lista)
 
 class ListaNomes(AnaliseDados):
     def __init__(self):
-        super().__init__(type(str))
+        self.__lista = []        
 
-    def entradaDeDados(self):
-        nome = input("Digite um nome: ")
-        self._AnaliseDados__lista.append(nome)
-
-    def mostraMediana(self):
-        mediana = self.calcularMediana()
-        print(f"Mediana: {mediana[0]}")
-
-    def mostraMenor(self):
-        menor = min(self._AnaliseDados__lista)
-        print(f"Menor: {menor}")
-
-    def mostraMaior(self):
-        maior = max(self._AnaliseDados__lista)
-        print(f"Maior: {maior}")
-
-    def listarEmOrdem(self):
-        return sorted(self._AnaliseDados__lista)
-
-class ListaDatas(AnaliseDados):
-    def __init__(self):
-        super().__init__(type(Data))
-        
-    # ... (código anterior)
-
-class ListaDatas(AnaliseDados):
-    def __init__(self):
-        super().__init__(type(Data))
-
-    def entradaDeDados(self):
+    def entrada_de_dados(self):
         try:
-            while True:
-                dia = int(input("Digite o dia: "))
-                if 1 <= dia <= 31:
-                    break
-                else:
-                    print("Dia invalido. Digite um valor entre 1 e 31.")
+            quantidade = int(input("Quantos nomes deseja inserir? "))
+            for _ in range(quantidade):
+                nome = input("Digite o nome: ")
+                self.__lista.append(nome)
+        except ValueError:
+            print("Erro: Insira um número válido para a quantidade.")
 
-            while True:
-                mes = int(input("Digite o mes: "))
-                if 1 <= mes <= 12:
-                    break
-                else:
-                    print("Mês invalido. Digite um valor entre 1 e 12.")
+    def mostra_mediana(self):
+        self.__lista.sort()
+        tamanho = len(self.__lista)
+        if tamanho % 2 == 0:
+            indice1 = tamanho // 2 - 1
+            indice2 = tamanho // 2
+            mediana = self.__lista[indice1]  # Retorna o primeiro nome entre os dois no meio
+        else:
+            indice = tamanho // 2
+            mediana = self.__lista[indice]  # Retorna o nome do meio
+        return mediana
 
-            while True:
-                ano = int(input("Digite o ano: "))
-                if 2000 <= ano <= 2500:
-                    break
-                else:
-                    print("Ano invalido. Digite um valor entre 2000 e 2500.")
+    def mostra_menor(self):
+        return min(self.__lista)
 
-            data = Data(dia, mes, ano)
-            self._AnaliseDados__lista.append(data)
-        except ValueError as e:
-            print(f"Erro ao inserir a data: {e}")
+    def mostra_maior(self):
+        return max(self.__lista)
 
-    def mostraMediana(self):
-        mediana = self.calcularMediana()
-        print(f"Mediana: {mediana[0]}")
+    def listar_em_ordem(self):
+        return sorted(self.__lista)
 
-    def mostraMenor(self):
-        menor = min(self._AnaliseDados__lista)
-        print(f"Menor: {menor}")
+    def __iter__(self):
+        return iter(self.__lista)
 
-    def mostraMaior(self):
-        maior = max(self._AnaliseDados__lista)
-        print(f"Maior: {maior}")
 
-    def listarEmOrdem(self):
-        return sorted(self._AnaliseDados__lista, key=lambda x: (x.ano, x.mes, x.dia))
+class ListaDatas(AnaliseDados):
+    def __init__(self):
+        self.__lista = []        
+    
+    def entrada_de_dados(self):
+        try:
+            quantidade = int(input("Quantas datas deseja inserir? "))
+            for _ in range(quantidade):
+                while True:
+                    try:
+                        data_input = input("Digite a data no formato dd/mm/aaaa: ")
+                        dia, mes, ano = map(int, data_input.split('/'))
+                        data = Data(dia, mes, ano)
+                        self.__lista.append(data)
+                        break
+                    except ValueError:
+                        print("Erro: Insira uma data válida no formato dd/mm/aaaa.")
+        except ValueError:
+            print("Erro: Insira um número válido para a quantidade.")
 
-# Restante do código permanece inalterado
+    def mostra_mediana(self):
+        self.__lista.sort()
+        tamanho = len(self.__lista)
+        if tamanho % 2 == 0:
+            indice1 = tamanho // 2 - 1
+            indice2 = tamanho // 2
+            mediana = self.__lista[indice1]  # Retorna a primeira data entre as duas no meio
+        else:
+            indice = tamanho // 2
+            mediana = self.__lista[indice]  # Retorna a data do meio
+        return mediana
+
+    def mostra_menor(self):
+        return min(self.__lista)
+
+    def mostra_maior(self):
+        return max(self.__lista)
+
+    def listar_em_ordem(self):
+        return sorted(self.__lista)
+
+    def __iter__(self):
+        return iter(self.__lista)
+
+    def __str__(self):
+        return ', '.join(str(data) for data in self.__lista)
+
 
 class ListaSalarios(AnaliseDados):
     def __init__(self):
-        super().__init__(type(float))
+        self.__lista = []        
 
-    def entradaDeDados(self):
-        salario = float(input("Digite um salario: "))
-        self._AnaliseDados__lista.append(salario)
+    def entrada_de_dados(self):
+        try:
+            quantidade = int(input("Quantos salários deseja inserir? "))
+            for _ in range(quantidade):
+                while True:
+                    try:
+                        salario = float(input("Digite o salário: "))
+                        if salario < 0:
+                            raise ValueError("Salário não pode ser negativo.")
+                        self.__lista.append(salario)
+                        break
+                    except ValueError:
+                        print("Erro: Insira um valor de salário válido.")
+        except ValueError:
+            print("Erro: Insira um número válido para a quantidade.")
 
-    def mostraMediana(self):
-        mediana = self.calcularMediana()
-        print(f"Mediana: {mediana[0]}")
+    def mostra_mediana(self):
+        self.__lista.sort()
+        tamanho = len(self.__lista)
+        if tamanho % 2 == 0:
+            indice1 = tamanho // 2 - 1
+            indice2 = tamanho // 2
+            mediana = (self.__lista[indice1] + self.__lista[indice2]) / 2  # Retorna a média entre os dois valores do meio
+        else:
+            indice = tamanho // 2
+            mediana = self.__lista[indice]  # Retorna o valor do meio
+        return mediana
 
-    def mostraMenor(self):
-        menor = min(self._AnaliseDados__lista)
-        print(f"Menor: {menor}")
+    def mostra_menor(self):
+        return min(self.__lista)
 
-    def mostraMaior(self):
-        maior = max(self._AnaliseDados__lista)
-        print(f"Maior: {maior}")
+    def mostra_maior(self):
+        return max(self.__lista)
 
-    def listarEmOrdem(self):
-        return sorted(self._AnaliseDados__lista)
+    def listar_em_ordem(self):
+        return sorted(self.__lista)
+
+    def __iter__(self):
+        return iter(self.__lista)
+
 
 class ListaIdades(AnaliseDados):
     def __init__(self):
-        super().__init__(type(int))
+        self.__lista = []        
+    
+    def entrada_de_dados(self):
+        try:
+            quantidade = int(input("Quantas idades deseja inserir? "))
+            for _ in range(quantidade):
+                while True:
+                    try:
+                        idade = int(input("Digite a idade: "))
+                        if idade < 0:
+                            raise ValueError("Idade não pode ser negativa.")
+                        self.__lista.append(idade)
+                        break
+                    except ValueError:
+                        print("Erro: Insira uma idade válida.")
+        except ValueError:
+            print("Erro: Insira um número válido para a quantidade.")
 
-    def entradaDeDados(self):
-        idade = int(input("Digite uma idade: "))
-        self._AnaliseDados__lista.append(idade)
+    def mostra_mediana(self):
+        self.__lista.sort()
+        tamanho = len(self.__lista)
+        if tamanho % 2 == 0:
+            indice1 = tamanho // 2 - 1
+            indice2 = tamanho // 2
+            mediana = (self.__lista[indice1] + self.__lista[indice2]) / 2  # Retorna a média entre as duas idades do meio
+        else:
+            indice = tamanho // 2
+            mediana = self.__lista[indice]  # Retorna a idade do meio
+        return mediana
 
-    def mostraMediana(self):
-        mediana = self.calcularMediana()
-        print(f"Mediana: {mediana[0]}")
+    def mostra_menor(self):
+        return min(self.__lista)
 
-    def mostraMenor(self):
-        menor = min(self._AnaliseDados__lista)
-        print(f"Menor: {menor}")
+    def mostra_maior(self):
+        return max(self.__lista)
 
-    def mostraMaior(self):
-        maior = max(self._AnaliseDados__lista)
-        print(f"Maior: {maior}")
+    def listar_em_ordem(self):
+        return sorted(self.__lista)
 
-    def listarEmOrdem(self):
-        return sorted(self._AnaliseDados__lista)
-# Função para iterar sobre duas listas simultaneamente
-def iterador_zip(lista1, lista2):
-    for nome, salario in zip(lista1, lista2):
-        yield nome, salario    
-# Função para aplicar um reajuste percentual a salários
-def reajuste_salarios(lista_salarios, percentual):
-    for salario in map(lambda x: x * (1 + percentual / 100), lista_salarios):
-        yield salario
+    def __iter__(self):
+        return iter(self.__lista)
 
-def ajuste_datas(lista_datas):
-    for data in map(lambda x: x if x.ano >= 2019 else Data(1, x.mes, x.ano), lista_datas):
-        yield data
 
-# Função principal para interação com o usuário
+# Funções adicionais
+
+def percorrer_listas_com_zip(lista_nomes, lista_salarios):
+    for nome, salario in zip(lista_nomes, lista_salarios):
+        print(f"{nome}: R${salario}")
+
+def calcular_folha_com_reajuste(lista_salarios):
+    for salario in lista_salarios:
+        print(f"Novo salário com reajuste de 10%: R${salario * 1.1:.2f}")
+
+def modificar_datas_anteriores_a_2019(lista_datas):
+    for data in lista_datas:
+        if data < Data(1, 1, 2019):
+            data.dia = 1
+    print("Datas modificadas com sucesso!")
+
+# Iteradores
+
+def iterador_zip(lista_nomes, lista_salarios):
+    percorrer_listas_com_zip(lista_nomes, lista_salarios)
+
+def iterador_map(lista_salarios):
+    calcular_folha_com_reajuste(lista_salarios)
+
+def iterador_filter(lista_datas):
+    modificar_datas_anteriores_a_2019(lista_datas)
+
+# Menu
+
 def menu():
     nomes = ListaNomes()
     datas = ListaDatas()
@@ -260,46 +293,37 @@ def menu():
     idades = ListaIdades()
 
     while True:
-        print("\nMenu de Opções:")
+        print("\n Menu Principal \n")
         print("1. Incluir um nome na lista de nomes")
-        print("2. Incluir um salário na lista de salarios")
+        print("2. Incluir um salário na lista de salários")
         print("3. Incluir uma data na lista de datas")
         print("4. Incluir uma idade na lista de idades")
-        print("5. Percorrer as listas de nomes e salarios")
+        print("5. Percorrer as listas de nomes e salários")
         print("6. Calcular o valor da folha com um reajuste de 10%")
         print("7. Modificar o dia das datas anteriores a 2019")
         print("8. Sair")
 
-        opcao = input("Escolha uma opcao (1-8): ")
+        opcao = input("Escolha uma opção: ")
 
         if opcao == "1":
-            nomes.entradaDeDados()
+            nomes.entrada_de_dados()
         elif opcao == "2":
-            salarios.entradaDeDados()
+            salarios.entrada_de_dados()
         elif opcao == "3":
-            datas.entradaDeDados()
+            datas.entrada_de_dados()
         elif opcao == "4":
-            idades.entradaDeDados()
+            idades.entrada_de_dados()
         elif opcao == "5":
-            for nome, salario in iterador_zip(nomes.listarEmOrdem(), salarios.listarEmOrdem()):
-                print(f"{nome}: R${salario:.2f}")
+            iterador_zip(nomes, salarios)
         elif opcao == "6":
-            novo_salarios = reajuste_salarios(salarios.listarEmOrdem(), 10)
-            print("Novos Salarios Após Reajuste:")
-            for salario in novo_salarios:
-                print(f"R${salario:.2f}")
+            iterador_map(salarios)
         elif opcao == "7":
-            datas_ajustadas = ajuste_datas(datas.listarEmOrdem())
-            print("Datas Ajustadas:")
-            for data in datas_ajustadas:
-                print(data)
+            iterador_filter(datas)
         elif opcao == "8":
-            print("Encerrando o programa.")
+            print("Saindo...")
             break
         else:
-            print("Opcao invalida. Tente novamente.")
-            
-# Ponto de entrada do programa
+            print("Opção inválida. Tente novamente.")
+
 if __name__ == "__main__":
     menu()
-
